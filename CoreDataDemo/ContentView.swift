@@ -9,8 +9,26 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var context
+    @FetchRequest(entity: Student.entity(), sortDescriptors:[]) var students: FetchedResults<Student>
     var body: some View {
-        Text("Hello, World!")
+        VStack {
+            List{
+                ForEach(students, id: \.id){ student in
+                    Text(student.name ?? "Unknow")
+                }
+            }
+            Button("Add"){
+                let firstName = ["Alonso","Carlos","Adriana","Luna", "Jose"]
+                let lastName = ["Gonzalez","Perez","Garcia","Lopez"]
+                let chosenFirstName = firstName.randomElement()!
+                let chosenLastName = lastName.randomElement()!
+                let student = Student(context:self.context)
+                student.name = "\(chosenFirstName) \(chosenLastName)"
+                student.id = UUID()
+                try? self.context.save()
+            }
+        }
     }
 }
 
